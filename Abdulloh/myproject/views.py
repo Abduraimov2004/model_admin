@@ -1,8 +1,10 @@
+from .models import Category, Product, Comment
 from django.shortcuts import render
 
 
-def car(request):
-    return render(request, 'car.html')
+
+def index(request):
+    return render(request, 'index.html')
 
 
 def waiting(request):

@@ -1,59 +1,34 @@
-from django.db import models
 from django.contrib.auth.models import AbstractUser
-
-# Create your models here.
-
-
-class User(AbstractUser):
-    age = models.PositiveSmallIntegerField(default=0)
-    rating = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
-
-    def __str__(self) -> str:
-        return self.username
-
-
-
+from django.db import models
 
 
 class Category(models.Model):
-    title = models.CharField(max_length=50)
-    image = models.ImageField(upload_to='images', blank=True)
+    name = models.CharField(max_length=100)
 
     def __str__(self):
-        return self.title
+        return self.name
 
 
 class Product(models.Model):
-    title = models.CharField(max_length=50)
-    price = models.DecimalField(max_digits=5, decimal_places=2)
-    color = models.CharField(max_length=50)
-    count = models.PositiveSmallIntegerField(default=0)
-    category_id = models.ForeignKey(Category, on_delete=models.PROTECT)
+    category = models.ForeignKey(Category, related_name='products', on_delete=models.PROTECT)
+    name = models.CharField(max_length=200)
+    price = models.DecimalField(max_digits=6, decimal_places=2)
+    description = models.TextField()
+    image_url = models.URLField()
 
     def __str__(self):
-        return self.title
-
-
-class Cart(models.Model):
-    user_id = models.ForeignKey(User, on_delete=models.PROTECT)
-    total_summa = models.DecimalField(max_digits=5, decimal_places=2)
-    total_qty = models.PositiveSmallIntegerField(default=0)
-
-
-
-class Cart_Product(models.Model):
-    cart_id = models.ForeignKey(Cart, on_delete=models.PROTECT)
-    product_id = models.ForeignKey(Product, on_delete=models.PROTECT)
-    count = models.PositiveSmallIntegerField(default=0)
-    summa = models.DecimalField(max_digits=5, decimal_places=2)
-
+        return self.name
 
 
 class Comment(models.Model):
+    product = models.ForeignKey(Product, related_name='comments', on_delete=models.CASCADE)
+    author = models.CharField(max_length=100)
     text = models.TextField()
-    product_id = models.ForeignKey(Product, on_delete=models.PROTECT)
-    user_id = models.ForeignKey(User, on_delete=models.PROTECT)
-    reg_date = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.text
+        return f'{self.author} - {self.product.name}'
+
+
+class User(AbstractUser):
+    print('email')
